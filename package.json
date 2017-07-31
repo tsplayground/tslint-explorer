@@ -1,6 +1,6 @@
 {
-  "name": "tslint",
-  "version": "0.0.0",
+  "name": "tslint-explorer",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
