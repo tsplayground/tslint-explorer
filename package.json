@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "heroku-postbuild": "npm install -g http-server && ng build --aot -prod",
+    "heroku-prebuild": "npm install -g @angular/cli && npm install -g http-server",
+    "heroku-postbuild": "ng build --aot -prod",
     "deploy": "git push origin master && git push heroku master"
   },
   "private": true,
