@@ -1,3 +1,55 @@
+<md-progress-bar mode="indeterminate"
+                 *ngIf="processing.length"></md-progress-bar>
 <h1>
-  {{title}}
+  Tslint inspector
 </h1>
+<expansion-panels-container>
+  <expansion-panel>
+    <expansion-panel-title>
+      Upload rules file
+    </expansion-panel-title>
+    <expansion-panel-description-hidden>
+      Expand to upload JSON file
+    </expansion-panel-description-hidden>
+
+    <expansion-panel-description-toggled>
+      <button type="button"
+              md-raised-button
+              (click)="imgFileInput.click()">Add a JSON file</button>
+      <input hidden
+             type="file"
+             #imgFileInput
+             (change)="previewJSONFile(imgFileInput)"
+             accept=".json" />
+    </expansion-panel-description-toggled>
+    <expansion-panel-content>
+      <pre>
+        {{uploadedJSON}}
+      </pre>
+    </expansion-panel-content>
+  </expansion-panel>
+  <expansion-panel *ngFor="let rule of rules"
+                   (onOpen)="loadUrl(rule)"
+                   (onClose)="processCompleted(rule.process)">
+    <expansion-panel-title class="mat-typography">
+      <strong>{{rule.key}}</strong>
+    </expansion-panel-title>
+    <expansion-panel-description-hidden>
+      <em>
+        {{rule.value}}
+      </em>
+    </expansion-panel-description-hidden>
+
+    <expansion-panel-description-toggled>
+      <pre>
+        {{rule.value}}
+      </pre>
+    </expansion-panel-description-toggled>
+    <expansion-panel-content>
+      <iframe [src]="rule.url"
+              frameborder="0"
+              class="tslint-embed"
+              (load)="processCompleted(rule.process)"></iframe>
+    </expansion-panel-content>
+  </expansion-panel>
+</expansion-panels-container>
