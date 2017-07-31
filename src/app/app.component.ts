@@ -58,7 +58,7 @@ export class AppComponent implements OnInit {
             duration: 2000,
           });
         } else {
-          this.loadRules(tslint);
+          this.rules = this.loadRules(tslint);
         }
 
         this.processCompleted(getJSONProcess);
@@ -79,19 +79,15 @@ export class AppComponent implements OnInit {
   }
 
   loadRules(tslint: {
-    rules: TSLintRule[]
-  }) {
-    for (const key in tslint.rules) {
-      if (!tslint.rules.hasOwnProperty(key)) {
-        continue;
-      }
-      this.rules.push({
-        key: key,
-        url: undefined,
-        value: JSON.stringify(tslint.rules[key], undefined, 2),
-        process: new Process()
-      });
-    }
+    rules: Array<any>
+  }): Array<TSLintRule> {
+
+    return Object.keys(tslint.rules).map(key => ({
+      key: key,
+      url: undefined,
+      value: JSON.stringify(tslint.rules[key], undefined, 2),
+      process: new Process()
+    }));
   }
 
   previewJSONFile(fileInput: any) {
@@ -110,7 +106,7 @@ export class AppComponent implements OnInit {
         }
         const formatted = JSON.stringify(result, null, 2);
         this.uploadedJSON = formatted;
-        this.loadRules(result);
+        this.rules = this.loadRules(result);
         this.snackBar.open('TSlint rules were imported successfully', undefined, {
           duration: 2000,
         });
