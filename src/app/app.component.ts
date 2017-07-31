@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
   }
 
   loadRules(tslint: {
-    rules: TSLintRule
+    rules: TSLintRule[]
   }) {
     for (const key in tslint.rules) {
       if (!tslint.rules.hasOwnProperty(key)) {
