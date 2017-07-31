@@ -14,8 +14,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/cli": "1.0.1",
-    "@angular/compiler-cli": "^4.0.0",
     "@angular/animations": "^4.3.2",
     "@angular/cdk": "^2.0.0-beta.8",
     "@angular/common": "^4.0.0",
@@ -53,6 +51,8 @@
   },
   "engines": {
     "node": "latest",
-    "npm": "latest"
+    "npm": "latest",
+    "yarn": "latest",
+    "@angular/cli": "1.0.1"
   }
 }
