@@ -30,7 +30,8 @@
   </expansion-panel>
   <expansion-panel *ngFor="let rule of rules"
                    (onOpen)="loadUrl(rule)"
-                   (onClose)="processCompleted(rule.process)">
+                   (onClose)="processCompleted(rule.process)"
+                   class="tslint-panel">
     <expansion-panel-title class="mat-typography">
       <strong>{{rule.key}}</strong>
     </expansion-panel-title>
@@ -45,7 +46,7 @@
         {{rule.value}}
       </pre>
     </expansion-panel-description-toggled>
-    <expansion-panel-content>
+    <expansion-panel-content class="tslint-content">
       <iframe [src]="rule.url"
               frameborder="0"
               class="tslint-embed"
