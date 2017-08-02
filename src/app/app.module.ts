@@ -6,17 +6,19 @@ import { HttpModule } from '@angular/http';
 import { ExpansionPanelsModule } from 'ng2-expansion-panels';
 import {
   MdButtonModule,
+  MdChipsModule,
+  MdIconModule,
+  MdInputModule,
   MdProgressBarModule,
   MdSnackBarModule
 } from '@angular/material';
-
 
 import { AppComponent } from './app.component';
 
 import {
   MessageService,
   ProcessService,
-  TSLintRuleService
+  TSLintService
 } from './services';
 
 @NgModule({
@@ -30,13 +32,16 @@ import {
     HttpModule,
     ExpansionPanelsModule,
     MdButtonModule,
+    MdChipsModule,
+    MdIconModule,
+    MdInputModule,
     MdProgressBarModule,
     MdSnackBarModule
   ],
   providers: [
     MessageService,
     ProcessService,
-    TSLintRuleService
+    TSLintService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,6 +1,5 @@
 md-progress-bar {
   position: fixed;
-  width: 100%;
   top: 0;
   left: 0;
   z-index: 1;
@@ -8,6 +7,11 @@ md-progress-bar {
 
 .tslint-panel > /deep/ .expansion-panel > .expansion-panel__content {
   margin-left: 0;
+}
+
+.tslint-rule-plugin {
+  float: right;
+  margin-right: 2em;
 }
 
 .tslint-content {

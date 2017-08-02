@@ -4,15 +4,16 @@ import {
   OnInit
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { Subscription } from 'rxjs/Rx';
 import {
   Process,
+  TSLintConfig,
   TSLintRule
 } from './models';
 import {
   MessageService,
   ProcessService,
-  TSLintRuleService
+  TSLintService
 } from './services';
 const CODELYZER_RULES = [
   'angular-whitespace',
@@ -53,56 +54,68 @@ export class AppComponent implements OnInit, OnDestroy {
   public rules: Array<TSLintRule> = [];
   public processes: Array<Process> = [];
   public uploadedJSON = 'Your uploaded rules will appear here';
-
+  public keywords = '';
+  private getJSONProcess: Process;
+  private tslintRuleSubscription: Subscription;
+  private processesSubscription: Subscription;
   constructor(private sanitizer: DomSanitizer,
               private messageService: MessageService,
               private processService: ProcessService,
-              private tslintRuleService: TSLintRuleService) { }
+              private tslintService: TSLintService) { }
 
   public ngOnInit(): void {
-    this.processService.list().subscribe(processes => this.processes = processes);
-    const getJSONProcess = new Process();
-    this.processService.start(getJSONProcess);
-    this.tslintRuleService.list().subscribe(tslint => {
+    this.processesSubscription = this.processService.list().subscribe(processes => this.processes = processes);
+    this.getJSONProcess = new Process();
+    this.processService.start(this.getJSONProcess);
+    this.tslintRuleSubscription = this.tslintService.getConfig().subscribe(tslint => {
         if (!tslint.rules) {
           this.messageService.toast('Invalid TSLint JSON file');
         } else {
           this.rules = this.loadRules(tslint);
         }
 
-        this.processService.complete(getJSONProcess);
+        this.processService.complete(this.getJSONProcess);
       });
   }
 
   public ngOnDestroy(): void {
+    if (this.tslintRuleSubscription) {
+      this.tslintRuleSubscription.unsubscribe();
+    }
 
+    if (this.processesSubscription) {
+      this.processesSubscription.unsubscribe();
+    }
   }
 
   public loadUrl(rule: TSLintRule): void {
     let tslintRulePage = `https://palantir.github.io/tslint/rules/${rule.key}`;
     if (CODELYZER_RULES.indexOf(rule.key) !== -1) {
-      tslintRulePage = `http://codelyzer.com/rules/${rule.key}`
+      tslintRulePage = `http://codelyzer.com/rules/${rule.key}`;
     }
     rule.url = this.sanitizer.bypassSecurityTrustResourceUrl(tslintRulePage);
     this.processes.push(rule.process);
   }
 
-  public loadRules(tslint: {
-    rules: Array<any>
-  }): Array<TSLintRule> {
+  public loadRules(tslint: TSLintConfig): Array<TSLintRule> {
 
     return Object.keys(tslint.rules).map(key => ({
       key,
       url: undefined,
+      plugin: (CODELYZER_RULES.indexOf(key) !== -1) ? 'codelyzer' : undefined,
       value: JSON.stringify(tslint.rules[key], undefined, 2),
       process: new Process()
-    }));
+    }))
+    .sort((prevRule, rule) => {
+      return (prevRule.key < rule.key) ? -1 :
+        (prevRule.key > rule.key) ? 1 : 0;
+    });
   }
 
-  private previewJSONFile(fileInput: any): boolean {
+  public previewJSONFile(fileInput: any): void {
     const files: FileList = fileInput.files;
     if (files.length <= 0) {
-      return false;
+      return;
     }
 
     const fr = new FileReader();
@@ -116,6 +129,7 @@ export class AppComponent implements OnInit, OnDestroy {
         const formatted = JSON.stringify(result, undefined, 2);
         this.uploadedJSON = formatted;
         this.rules = this.loadRules(result);
+        this.tslintService.updateConfig(result);
         this.messageService.toast('TSLint rules were imported successfully');
       } catch (error) {
         this.messageService.toast('Invalid TSLint JSON file');
@@ -123,5 +137,20 @@ export class AppComponent implements OnInit, OnDestroy {
     };
 
     fr.readAsText(files.item(0));
+  }
+
+  public keywordsChange(event: any): void {
+    if (!this.isKeywordsValid() && !/(Backspace|Shift|CapsLock|Insert|Delete)/.test(event.key)) {
+      this.messageService.toast('Invalid key string');
+
+      return;
+    }
+
+    this.processService.start(this.getJSONProcess);
+    this.tslintService.filterRules(this.keywords);
+  }
+
+  private isKeywordsValid(): boolean {
+    return this.keywords && !/[^a-z-]/.test(this.keywords);
   }
 }
