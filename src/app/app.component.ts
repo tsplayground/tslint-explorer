@@ -31,6 +31,35 @@ class Process {
 
 }
 
+const CODELYZER_RULES = [
+  'angular-whitespace',
+  'banana-in-box',
+  'component-class-suffix',
+  'component-selector',
+  'directive-class-suffix',
+  'directive-selector',
+  'import-destructing-spacing',
+  'invoke-injectable',
+  'no-access-missing-member',
+  'no-attribute-parameter-decorator',
+  'no-forward-ref',
+  'no-input-rename',
+  'no-output-rename',
+  'no-unused-css-rule',
+  'pipe-impure',
+  'pipe-naming',
+  'template-to-ng-template',
+  'templates-no-negated-async',
+  'templates-use-public',
+  'use-host-property-decorator',
+  'use-input-property-decorator',
+  'use-life-cycle-interface',
+  'use-output-property-decorator',
+  'use-pipe-decorator',
+  'use-pipe-transform-interface',
+  'use-view-encapsulation',
+];
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -66,7 +95,11 @@ export class AppComponent implements OnInit {
   }
 
   loadUrl(rule: TSLintRule) {
-    rule.url = this.sanitizer.bypassSecurityTrustResourceUrl(`https://palantir.github.io/tslint/rules/${rule.key}`);
+    let tslintRulePage = `https://palantir.github.io/tslint/rules/${rule.key}`;
+    if (CODELYZER_RULES.indexOf(rule.key) !== -1) {
+      tslintRulePage = `http://codelyzer.com/rules/${rule.key}`
+    }
+    rule.url = this.sanitizer.bypassSecurityTrustResourceUrl(tslintRulePage);
     this.processing.push(rule.process);
   }
 
