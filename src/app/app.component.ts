@@ -1,36 +1,19 @@
 import {
   Component,
+  OnDestroy,
   OnInit
 } from '@angular/core';
-import { Http } from '@angular/http';
+import { DomSanitizer } from '@angular/platform-browser';
+
 import {
-  DomSanitizer,
-  SafeResourceUrl
-} from '@angular/platform-browser';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/take';
-import { MdSnackBar } from '@angular/material';
-
-import { Guid } from './utils/uuid';
-
-class TSLintRule {
-  key: string;
-  url: SafeResourceUrl;
-  value: string;
-  process?: Process;
-}
-
-class Process {
-  private _id: string;
-  get id(): string {
-    if (this._id) {
-      return this._id;
-    }
-    this._id = Guid.newGuid();
-  }
-
-}
-
+  Process,
+  TSLintRule
+} from './models';
+import {
+  MessageService,
+  ProcessService,
+  TSLintRuleService
+} from './services';
 const CODELYZER_RULES = [
   'angular-whitespace',
   'banana-in-box',
@@ -57,7 +40,7 @@ const CODELYZER_RULES = [
   'use-output-property-decorator',
   'use-pipe-decorator',
   'use-pipe-transform-interface',
-  'use-view-encapsulation',
+  'use-view-encapsulation'
 ];
 
 @Component({
@@ -66,64 +49,57 @@ const CODELYZER_RULES = [
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit {
-  rules: TSLintRule[] = [];
-  processing: Process[] = [];
-  uploadedJSON: string = 'Your uploaded rules will appear here';
-  constructor(private http: Http,
-              private sanitizer: DomSanitizer,
-              private snackBar: MdSnackBar) { }
+export class AppComponent implements OnInit, OnDestroy {
+  public rules: Array<TSLintRule> = [];
+  public processes: Array<Process> = [];
+  public uploadedJSON = 'Your uploaded rules will appear here';
 
-  ngOnInit(): void {
+  constructor(private sanitizer: DomSanitizer,
+              private messageService: MessageService,
+              private processService: ProcessService,
+              private tslintRuleService: TSLintRuleService) { }
+
+  public ngOnInit(): void {
+    this.processService.list().subscribe(processes => this.processes = processes);
     const getJSONProcess = new Process();
-    this.processing.push(getJSONProcess);
-    this.http
-      .get('/assets/tslint.json')
-      .map(response => response.json())
-      .take(1)
-      .subscribe(tslint => {
+    this.processService.start(getJSONProcess);
+    this.tslintRuleService.list().subscribe(tslint => {
         if (!tslint.rules) {
-          this.snackBar.open('Invalid TSlint JSON file', undefined, {
-            duration: 2000,
-          });
+          this.messageService.toast('Invalid TSLint JSON file');
         } else {
           this.rules = this.loadRules(tslint);
         }
 
-        this.processCompleted(getJSONProcess);
+        this.processService.complete(getJSONProcess);
       });
   }
 
-  loadUrl(rule: TSLintRule) {
+  public ngOnDestroy(): void {
+
+  }
+
+  public loadUrl(rule: TSLintRule): void {
     let tslintRulePage = `https://palantir.github.io/tslint/rules/${rule.key}`;
     if (CODELYZER_RULES.indexOf(rule.key) !== -1) {
       tslintRulePage = `http://codelyzer.com/rules/${rule.key}`
     }
     rule.url = this.sanitizer.bypassSecurityTrustResourceUrl(tslintRulePage);
-    this.processing.push(rule.process);
+    this.processes.push(rule.process);
   }
 
-  processCompleted(process: Process): void {
-    const processIndex = this.processing.indexOf(process);
-
-    if (processIndex !== -1) {
-      this.processing.splice(processIndex, 1);
-    }
-  }
-
-  loadRules(tslint: {
+  public loadRules(tslint: {
     rules: Array<any>
   }): Array<TSLintRule> {
 
     return Object.keys(tslint.rules).map(key => ({
-      key: key,
+      key,
       url: undefined,
       value: JSON.stringify(tslint.rules[key], undefined, 2),
       process: new Process()
     }));
   }
 
-  previewJSONFile(fileInput: any) {
+  private previewJSONFile(fileInput: any): boolean {
     const files: FileList = fileInput.files;
     if (files.length <= 0) {
       return false;
@@ -131,22 +107,18 @@ export class AppComponent implements OnInit {
 
     const fr = new FileReader();
 
-    fr.onload = (e) => {
+    fr.onload = (e: Event) => {
       try {
         const result = JSON.parse((e.target as any).result);
         if (!result.rules) {
-          throw new Error('Invalid TSlint JSON file');
+          throw new Error('Invalid TSLint JSON file');
         }
-        const formatted = JSON.stringify(result, null, 2);
+        const formatted = JSON.stringify(result, undefined, 2);
         this.uploadedJSON = formatted;
         this.rules = this.loadRules(result);
-        this.snackBar.open('TSlint rules were imported successfully', undefined, {
-          duration: 2000,
-        });
-      } catch(error) {
-        this.snackBar.open('Invalid TSlint JSON file', undefined, {
-          duration: 2000,
-        });
+        this.messageService.toast('TSLint rules were imported successfully');
+      } catch (error) {
+        this.messageService.toast('Invalid TSLint JSON file');
       }
     };
 

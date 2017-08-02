@@ -13,6 +13,12 @@ import {
 
 import { AppComponent } from './app.component';
 
+import {
+  MessageService,
+  ProcessService,
+  TSLintRuleService
+} from './services';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -27,7 +33,11 @@ import { AppComponent } from './app.component';
     MdProgressBarModule,
     MdSnackBarModule
   ],
-  providers: [],
+  providers: [
+    MessageService,
+    ProcessService,
+    TSLintRuleService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

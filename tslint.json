@@ -1,4 +1,7 @@
 {
+  "rulesDirectory": [
+    "node_modules/codelyzer"
+  ],
   "extends": [ "codelyzer" ],
   "rules": {
     "member-access": [
@@ -253,6 +256,7 @@
       "element",
       [
         "ngx",
+        "app",
         "test"
       ],
       "kebab-case"

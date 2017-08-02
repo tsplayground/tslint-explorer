@@ -1,5 +1,5 @@
 <md-progress-bar mode="indeterminate"
-                 *ngIf="processing.length"></md-progress-bar>
+                 *ngIf="processes?.length"></md-progress-bar>
 <h1>
   Tslint Explorer
 </h1>
@@ -30,7 +30,7 @@
   </expansion-panel>
   <expansion-panel *ngFor="let rule of rules"
                    (onOpen)="loadUrl(rule)"
-                   (onClose)="processCompleted(rule.process)"
+                   (onClose)="processService.complete(rule.process)"
                    class="tslint-panel">
     <expansion-panel-title class="mat-typography">
       <strong>{{rule.key}}</strong>
@@ -50,7 +50,7 @@
       <iframe [src]="rule.url"
               frameborder="0"
               class="tslint-embed"
-              (load)="processCompleted(rule.process)"></iframe>
+              (load)="processService.complete(rule.process)"></iframe>
     </expansion-panel-content>
   </expansion-panel>
 </expansion-panels-container>

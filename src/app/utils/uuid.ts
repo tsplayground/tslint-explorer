@@ -1,10 +1,10 @@
-export class Guid {
+export class UUID {
 
-  public static newGuid(): string {
-    return this.generateGuid();
+  public static newUUID(): string {
+    return this.generateUUID();
   }
 
-  private static generateGuid(): string {
+  private static generateUUID(): string {
     return this.generatePart() + this.generatePart() + '-' + this.generatePart() + '-' + this.generatePart() + '-' +
       this.generatePart() + '-' + this.generatePart() + this.generatePart() + this.generatePart();
   }
