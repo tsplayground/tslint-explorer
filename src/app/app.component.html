@@ -30,7 +30,7 @@
       <input hidden
              type="file"
              #imgFileInput
-             (change)="previewJSONFile(imgFileInput, previewJSONBlock)"
+             (change)="previewJSONFile(imgFileInput)"
              accept=".json" />
     </expansion-panel-description-toggled>
     <expansion-panel-content>
@@ -43,7 +43,7 @@
     </expansion-panel-content>
   </expansion-panel>
   <expansion-panel *ngFor="let rule of rules"
-                   (onOpen)="loadUrl(rule, json)"
+                   (onOpen)="loadUrl(rule)"
                    (onClose)="processService.complete(rule.process)"
                    class="tslint-panel">
     <expansion-panel-title class="mat-typography">
