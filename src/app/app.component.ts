@@ -130,6 +130,9 @@ export class AppComponent implements OnInit, OnDestroy {
         this.uploadedJSON = formatted;
         this.rules = this.loadRules(result);
         this.tslintService.updateConfig(result);
+        // Need time to load JSON file into view
+        setTimeout(() => {
+        }, 100);
         this.messageService.toast('TSLint rules were imported successfully');
       } catch (error) {
         this.messageService.toast('Invalid TSLint JSON file');

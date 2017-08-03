@@ -1,16 +1,18 @@
 <md-progress-bar class="full-width"
                  mode="indeterminate"
                  *ngIf="processes?.length"></md-progress-bar>
-<h1 class="mat-headline">
+<h1 class="mat-headline app-title">
   Tslint Explorer
 </h1>
-<md-input-container class="full-width mat-title">
+<md-input-container class="full-width mat-title search-box"
+                    sticky
+                    [stickyMin]="60">
   <md-icon mdPrefix>search</md-icon>
   <input type="text"
-         mdInput
-         placeholder="Search rules by key"
-         [(ngModel)]="keywords"
-         (keyup)="keywordsChange($event)">
+        mdInput
+        placeholder="Search rules by key"
+        [(ngModel)]="keywords"
+        (keyup)="keywordsChange($event)">
 </md-input-container>
 <expansion-panels-container>
   <expansion-panel>
@@ -28,17 +30,20 @@
       <input hidden
              type="file"
              #imgFileInput
-             (change)="previewJSONFile(imgFileInput)"
+             (change)="previewJSONFile(imgFileInput, previewJSONBlock)"
              accept=".json" />
     </expansion-panel-description-toggled>
     <expansion-panel-content>
       <pre>
-        {{uploadedJSON}}
+        <code mwlHighlightJs
+              [source]="uploadedJSON"
+              language="json">
+        </code>
       </pre>
     </expansion-panel-content>
   </expansion-panel>
   <expansion-panel *ngFor="let rule of rules"
-                   (onOpen)="loadUrl(rule)"
+                   (onOpen)="loadUrl(rule, json)"
                    (onClose)="processService.complete(rule.process)"
                    class="tslint-panel">
     <expansion-panel-title class="mat-typography">
@@ -58,7 +63,10 @@
 
     <expansion-panel-description-toggled>
       <pre>
-        {{rule.value}}
+        <code mwlHighlightJs
+              [source]="rule.value"
+              language="json">
+        </code>
       </pre>
     </expansion-panel-description-toggled>
     <expansion-panel-content class="tslint-content">

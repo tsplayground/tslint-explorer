@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ExpansionPanelsModule } from 'ng2-expansion-panels';
+
 import {
   MdButtonModule,
   MdChipsModule,
@@ -13,7 +14,14 @@ import {
   MdSnackBarModule
 } from '@angular/material';
 
+import hljs from 'highlight.js';
+import {
+  HIGHLIGHT_JS,
+  HighlightJsModule
+} from 'angular-highlight-js';
+
 import { AppComponent } from './app.component';
+import { StickyDirective } from './directives';
 
 import {
   MessageService,
@@ -21,15 +29,24 @@ import {
   TSLintService
 } from './services';
 
+export function highlightJsFactory() {
+  return hljs;
+}
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StickyDirective
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
     HttpModule,
+    HighlightJsModule.forRoot({
+      provide: HIGHLIGHT_JS,
+      useFactory: highlightJsFactory
+    }),
     ExpansionPanelsModule,
     MdButtonModule,
     MdChipsModule,
