@@ -51,8 +51,8 @@ const CODELYZER_RULES = [
 })
 
 export class AppComponent implements OnInit, OnDestroy {
-  public rules: Array<TSLintRule> = [];
-  public processes: Array<Process> = [];
+  public rules: TSLintRule[] = [];
+  public processes: Process[] = [];
   public uploadedJSON = 'Your uploaded rules will appear here';
   public keywords = '';
   private getJSONProcess: Process;
@@ -64,7 +64,8 @@ export class AppComponent implements OnInit, OnDestroy {
               private tslintService: TSLintService) { }
 
   public ngOnInit(): void {
-    this.processesSubscription = this.processService.list().subscribe(processes => this.processes = processes);
+    this.processesSubscription = this.processService.list()
+      .subscribe(processes => this.processes = processes);
     this.getJSONProcess = new Process();
     this.processService.start(this.getJSONProcess);
     this.tslintRuleSubscription = this.tslintService.getConfig().subscribe(tslint => {
@@ -97,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.processes.push(rule.process);
   }
 
-  public loadRules(tslint: TSLintConfig): Array<TSLintRule> {
+  public loadRules(tslint: TSLintConfig): TSLintRule[] {
 
     return Object.keys(tslint.rules).map(key => ({
       key,
@@ -130,9 +131,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.uploadedJSON = formatted;
         this.rules = this.loadRules(result);
         this.tslintService.updateConfig(result);
-        // Need time to load JSON file into view
-        setTimeout(() => {
-        }, 100);
         this.messageService.toast('TSLint rules were imported successfully');
       } catch (error) {
         this.messageService.toast('Invalid TSLint JSON file');

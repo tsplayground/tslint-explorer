@@ -1,9 +1,12 @@
 {
+  "rulesDirectory": [
+    "./node_modules/codelyzer"
+  ],
   "extends": [ "codelyzer" ],
+  "defaultSeverity": "error",
   "rules": {
     "member-access": [
-      true,
-      "no-public"
+      true
     ],
     "member-ordering": [
       true,
@@ -29,7 +32,10 @@
     "no-empty-interface": true,
     "prefer-method-signature": true,
     "interface-over-type-literal": true,
-    "no-arg": true,
+    "no-arg": {
+      "options": true,
+      "severity": "warning"
+    },
     "only-arrow-functions": [
       true,
       "allow-declarations",
@@ -70,15 +76,10 @@
       "call-signature",
       "property-declaration"
     ],
-    "no-inferrable-types": true,
     "typeof-compare": true,
-    "no-angle-bracket-type-assertion": true,
-    "callable-types": true,
-    "no-null-keyword": true,
-    "no-non-null-assertion": true,
     "array-type": [
       true,
-      "generic"
+      "array"
     ],
     "prefer-object-spread": true,
     "object-literal-shorthand": true,
@@ -89,22 +90,25 @@
     "quotemark": [
       true,
       "single",
-      "avoid-template",
       "avoid-escape"
     ],
     "prefer-template": true,
-    "no-invalid-template-strings": true,
+    "no-invalid-template-strings": {
+      "options": true,
+      "severity": "warning"
+    },
     "triple-equals": [
       true,
       "allow-null-check"
     ],
-    "binary-expression-operand-order": true,
-    "no-bitwise": true,
     "use-isnan": true,
     "no-conditional-assignment": true,
     "prefer-conditional-expression": true,
     "prefer-for-of": true,
-    "forin": true,
+    "forin": {
+      "options": true,
+      "severity": "warning"
+    },
     "switch-default": true,
     "no-switch-case-fall-through": true,
     "no-unsafe-finally": true,
@@ -119,7 +123,7 @@
     ],
     "max-line-length": [
       true,
-      140
+      100
     ],
     "indent": [
       true,
@@ -127,10 +131,7 @@
       2
     ],
     "eofline": true,
-    "curly": [
-      true,
-      "as-needed"
-    ],
+    "curly": true,
     "whitespace": [
       true,
       "check-branch",
@@ -170,7 +171,6 @@
     ],
     "import-spacing": true,
     "no-trailing-whitespace": true,
-    "newline-before-return": true,
     "one-line": [
       true,
       "check-open-brace",
@@ -253,6 +253,7 @@
       "element",
       [
         "ngx",
+        "app",
         "test"
       ],
       "kebab-case"
