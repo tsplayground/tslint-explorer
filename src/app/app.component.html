@@ -7,12 +7,20 @@
 <md-input-container class="full-width mat-title search-box"
                     sticky
                     [stickyMin]="60">
-  <md-icon mdPrefix>search</md-icon>
+  
+  <md-chip-list mdPrefix>
+    <md-chip color="accent"
+            selected="true"
+            [attr.title]="rules.length.toString().concat(' rule', rules.length > 1 ? 's' : '', ' found')">
+      {{rules.length}}
+    </md-chip>
+    <md-icon>search</md-icon>
+  </md-chip-list>
   <input type="text"
-        mdInput
-        placeholder="Filter rules by key"
-        [(ngModel)]="keywords"
-        (keyup)="keywordsChange($event)">
+         mdInput
+         placeholder="Filter rules by key"
+         [(ngModel)]="keywords"
+         (keyup)="keywordsChange($event)">
 </md-input-container>
 <expansion-panels-container>
   <expansion-panel>
@@ -70,6 +78,10 @@
       </pre>
     </expansion-panel-description-toggled>
     <expansion-panel-content class="tslint-content">
+      <!-- <button type="button"
+              md-raised-button><md-icon>check</md-icon></button><br>
+      <button type="button"
+              md-raised-button><md-icon>delete</md-icon></button> -->
       <iframe [src]="rule.url"
               frameborder="0"
               class="tslint-embed"
