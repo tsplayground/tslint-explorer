@@ -51,7 +51,7 @@
     </expansion-panel-content>
   </expansion-panel>
   <expansion-panel *ngFor="let rule of rules"
-                   (onOpen)="loadUrl(rule)"
+                   (onOpen)="activeRule(rule)"
                    (onClose)="processService.complete(rule.process)"
                    class="tslint-panel">
     <expansion-panel-title class="mat-typography">
@@ -78,10 +78,55 @@
       </pre>
     </expansion-panel-description-toggled>
     <expansion-panel-content class="tslint-content">
-      <!-- <button type="button"
-              md-raised-button><md-icon>check</md-icon></button><br>
-      <button type="button"
-              md-raised-button><md-icon>delete</md-icon></button> -->
+      <ng-template [ngIf]="!rule.status">
+        <button type="button"
+                color="success"
+                title="Approve this rule"
+                (click)="approveRule(rule)"
+                type="button"
+                md-raised-button>
+          <md-icon color="white">check</md-icon>
+          Approve
+        </button><br>
+        <button type="button"
+                color="danger"
+                title="Remove this rule"
+                (click)="removeRule(rule)"
+                type="button"
+                md-raised-button>
+          <md-icon color="white">delete</md-icon>
+          Remove
+        </button><br>
+        <button type="button"
+                color="warning"
+                title="Mark this rule as experimental"
+                (click)="markRuleAsExperimental(rule)"
+                type="button"
+                md-raised-button>
+          <md-icon color="white">feedback</md-icon>
+          Experimental
+        </button>
+      </ng-template>
+      <button *ngIf="rule.status === tslintRuleStatus?.APPROVED"
+              type="button"
+              color="success"
+              title="This rule is approved"
+              type="button"
+              disabled
+              md-raised-button>
+        <md-icon color="white">check</md-icon>
+        Approved
+      </button><br>
+      <button *ngIf="rule.status === tslintRuleStatus?.MARKED_AS_EXPERIMENTAL"
+              type="button"
+              color="warning"
+              title="This rule is marked as experimental"
+              type="button"
+              disabled
+              md-raised-button>
+        <md-icon color="white">feedback</md-icon>
+        Experimental
+      </button>
       <iframe [src]="rule.url"
               frameborder="0"
               class="tslint-embed"

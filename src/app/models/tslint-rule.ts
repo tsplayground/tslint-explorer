@@ -7,4 +7,5 @@ export class TSLintRule {
   public plugin: string;
   public value: string;
   public process?: Process;
+  public status?: number;
 }

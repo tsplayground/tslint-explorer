@@ -4,3 +4,25 @@
 .full-width {
   width: 100%!important;
 }
+
+.mat-raised-button {
+  &.mat-danger {
+    background: #f44336;
+    color: white;
+  }
+
+  &.mat-warning {
+    background: #ffc107;
+    color: white;
+  }
+
+  &.mat-success {
+    background: #4caf50;
+    color: white;
+  }
+
+}
+
+.mat-white {
+  color: white;
+}

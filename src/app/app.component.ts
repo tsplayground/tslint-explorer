@@ -15,6 +15,7 @@ import {
   ProcessService,
   TSLintService
 } from './services';
+import { TSLINT_RULE_STATUS } from './enums';
 const CODELYZER_RULES = [
   'angular-whitespace',
   'banana-in-box',
@@ -55,6 +56,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public processes: Process[] = [];
   public uploadedJSON = 'Your uploaded rules will appear here';
   public keywords = '';
+  private tslintRuleStatus = TSLINT_RULE_STATUS;
   private getJSONProcess: Process;
   private tslintRuleSubscription: Subscription;
   private processesSubscription: Subscription;
@@ -89,6 +91,11 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  public activeRule(rule: TSLintRule): void {
+    this.loadUrl(rule);
+    // TODO: Reopen accordion after reload rule
+  }
+
   public loadUrl(rule: TSLintRule): void {
     let tslintRulePage = `https://palantir.github.io/tslint/rules/${rule.key}`;
     if (CODELYZER_RULES.indexOf(rule.key) !== -1) {
@@ -105,6 +112,7 @@ export class AppComponent implements OnInit, OnDestroy {
       url: undefined,
       plugin: (CODELYZER_RULES.indexOf(key) !== -1) ? 'codelyzer' : undefined,
       value: JSON.stringify(tslint.rules[key], undefined, 2),
+      status: this.tslintService.getRuleStatus(key),
       process: new Process()
     }))
     .sort((prevRule, rule) => {
@@ -149,6 +157,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.processService.start(this.getJSONProcess);
     this.tslintService.filterRules(this.keywords);
+  }
+
+  public approveRule(rule: TSLintRule): void {
+    this.tslintService.approveRule(rule);
+  }
+
+  public removeRule(rule: TSLintRule): void {
+    this.tslintService.removeRule(rule);
+  }
+
+  public markRuleAsExperimental(rule: TSLintRule): void {
+    this.tslintService.markRuleAsExperimental(rule);
   }
 
   private isKeywordsValid(): boolean {
