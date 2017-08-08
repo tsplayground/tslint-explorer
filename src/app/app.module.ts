@@ -10,6 +10,7 @@ import {
   MdChipsModule,
   MdIconModule,
   MdInputModule,
+  MdMenuModule,
   MdProgressBarModule,
   MdSnackBarModule
 } from '@angular/material';
@@ -29,7 +30,7 @@ import {
   TSLintService
 } from './services';
 
-export function highlightJsFactory() {
+export function highlightJsFactory(): any {
   return hljs;
 }
 
@@ -52,6 +53,7 @@ export function highlightJsFactory() {
     MdChipsModule,
     MdIconModule,
     MdInputModule,
+    MdMenuModule,
     MdProgressBarModule,
     MdSnackBarModule
   ],

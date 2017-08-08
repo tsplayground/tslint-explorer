@@ -9,4 +9,5 @@ export class TSLintConfig {
   public _status: {
     [key: string]: number
   };
+  public experimentalRules?: string[];
 }

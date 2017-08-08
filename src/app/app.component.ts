@@ -60,6 +60,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private getJSONProcess: Process;
   private tslintRuleSubscription: Subscription;
   private processesSubscription: Subscription;
+  private activatedIndex: number;
+  private listChanged = false;
   constructor(private sanitizer: DomSanitizer,
               private messageService: MessageService,
               private processService: ProcessService,
@@ -93,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public activeRule(rule: TSLintRule): void {
     this.loadUrl(rule);
-    // TODO: Reopen accordion after reload rule
+    this.activatedIndex = this.rules.indexOf(rule);
   }
 
   public loadUrl(rule: TSLintRule): void {
@@ -106,15 +108,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public loadRules(tslint: TSLintConfig): TSLintRule[] {
-
-    return Object.keys(tslint.rules).map(key => ({
-      key,
-      url: undefined,
-      plugin: (CODELYZER_RULES.indexOf(key) !== -1) ? 'codelyzer' : undefined,
-      value: JSON.stringify(tslint.rules[key], undefined, 2),
-      status: this.tslintService.getRuleStatus(key),
-      process: new Process()
-    }))
+    return Object.keys(tslint.rules)
+      .filter(key => this.tslintService.getRuleStatus(key) !== TSLINT_RULE_STATUS.REMOVED)
+      .map(key => ({
+        key,
+        url: undefined,
+        plugin: (CODELYZER_RULES.indexOf(key) !== -1) ? 'codelyzer' : undefined,
+        value: JSON.stringify(tslint.rules[key], undefined, 2),
+        status: this.tslintService.getRuleStatus(key),
+        process: new Process()
+      }))
     .sort((prevRule, rule) => {
       return (prevRule.key < rule.key) ? -1 :
         (prevRule.key > rule.key) ? 1 : 0;
@@ -161,17 +164,36 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public approveRule(rule: TSLintRule): void {
     this.tslintService.approveRule(rule);
+    this.listChanged = true;
   }
 
   public removeRule(rule: TSLintRule): void {
     this.tslintService.removeRule(rule);
+    this.listChanged = true;
   }
 
   public markRuleAsExperimental(rule: TSLintRule): void {
     this.tslintService.markRuleAsExperimental(rule);
+    this.listChanged = true;
+  }
+
+  public exportJSONFile(): void {
+    const anchor: HTMLAnchorElement = document.createElement('a');
+    anchor.href = this.tslintService.toDataURI();
+    anchor.download = 'tslint.json';
+    anchor.click();
+    anchor.remove();
   }
 
   private isKeywordsValid(): boolean {
     return this.keywords && !/[^a-z-]/.test(this.keywords);
+  }
+
+  private activatePanel(panel: any): string {
+    if (this.listChanged) {
+      panel.toggle();
+      this.listChanged = false;
+      return '';
+    }
   }
 }

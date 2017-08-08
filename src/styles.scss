@@ -5,7 +5,9 @@
   width: 100%!important;
 }
 
-.mat-raised-button {
+.mat-raised-button,
+.mat-chip,
+.mat-chip.mat-chip-selected {
   &.mat-danger {
     background: #f44336;
     color: white;

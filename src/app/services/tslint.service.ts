@@ -26,7 +26,18 @@ export class TSLintService {
       .first()
       .subscribe((tsLintConfig: TSLintConfig) => {
         this.tsLintConfig = tsLintConfig;
-        tsLintConfig._status = {};
+        this.tsLintConfig._status = {};
+        this.tsLintConfig.experimentalRules = tsLintConfig.experimentalRules || [];
+        if (this.tsLintConfig.experimentalRules.length) {
+          this.tsLintConfig.experimentalRules.forEach(key => {
+            this.setRuleStatus({
+              key,
+              plugin: undefined,
+              url: undefined,
+              value: this.tsLintConfig.rules[key]
+            }, TSLINT_RULE_STATUS.MARKED_AS_EXPERIMENTAL);
+          });
+        }
         this.tsLintConfigSubject.next(this.tsLintConfig);
       });
 
@@ -100,6 +111,29 @@ export class TSLintService {
   public setRuleStatus(rule: TSLintRule, status: number): void {
     rule.status = status;
     this.tsLintConfig._status[this.getRuleStatusKey(rule.key)] = status;
+  }
+
+  public toDataURI(): string {
+    const jsonFile: string = 'tslint.json';
+    const file = new File([jsonFile], 'tslint.json');
+    const tsLintConfig = {
+      ...this.tsLintConfig,
+      experimentalRules: []
+    };
+
+    for (const key in tsLintConfig.rules) {
+      if (this.getRuleStatus(key) === TSLINT_RULE_STATUS.REMOVED) {
+        delete tsLintConfig.rules[key];
+      } else if (this.getRuleStatus(key) === TSLINT_RULE_STATUS.MARKED_AS_EXPERIMENTAL) {
+        tsLintConfig.experimentalRules.push(key);
+      }
+    }
+
+    delete tsLintConfig._status;
+
+    const str = JSON.stringify(tsLintConfig, undefined, 2);
+
+    return `data:application/json;charset=utf-8,${encodeURIComponent(str)}`;
   }
 
   // tslint:disable-next-line:prefer-function-over-method

@@ -7,11 +7,11 @@
 <md-input-container class="full-width mat-title search-box"
                     sticky
                     [stickyMin]="60">
-  
+
   <md-chip-list mdPrefix>
     <md-chip color="accent"
-            selected="true"
-            [attr.title]="rules.length.toString().concat(' rule', rules.length > 1 ? 's' : '', ' found')">
+             selected="true"
+             [attr.title]="rules.length.toString().concat(' rule', rules.length > 1 ? 's' : '', ' found')">
       {{rules.length}}
     </md-chip>
     <md-icon>search</md-icon>
@@ -50,13 +50,29 @@
       </pre>
     </expansion-panel-content>
   </expansion-panel>
-  <expansion-panel *ngFor="let rule of rules"
+  <expansion-panel #panel
+                   *ngFor="let rule of rules; let index = index"
                    (onOpen)="activeRule(rule)"
                    (onClose)="processService.complete(rule.process)"
                    class="tslint-panel">
     <expansion-panel-title class="mat-typography">
       <strong>{{rule.key}}</strong>
+      <ng-template [ngIf]="index === activatedIndex">
+        {{activatePanel(panel)}}
+      </ng-template>
       <md-chip-list class="tslint-rule-plugin">
+        <md-chip *ngIf="rule.status === tslintRuleStatus?.APPROVED"
+                 color="success"
+                 selected="true">
+          <md-icon color="white"
+                   style="font-size: 13px; width: 13px; height: 13px;">check</md-icon>
+        </md-chip>
+        <md-chip *ngIf="rule.status === tslintRuleStatus?.MARKED_AS_EXPERIMENTAL"
+                 color="warning"
+                 selected="true">
+          <md-icon color="white"
+                   style="font-size: 13px; width: 13px; height: 13px;">feedback</md-icon>
+        </md-chip>
         <md-chip *ngIf="!rule.plugin">tslint</md-chip>
         <md-chip *ngIf="rule.plugin"
                  color="primary"
@@ -78,7 +94,7 @@
       </pre>
     </expansion-panel-description-toggled>
     <expansion-panel-content class="tslint-content">
-      <ng-template [ngIf]="!rule.status">
+      <ng-template [ngIf]="rule.status === undefined">
         <button type="button"
                 color="success"
                 title="Approve this rule"
@@ -86,7 +102,7 @@
                 type="button"
                 md-raised-button>
           <md-icon color="white">check</md-icon>
-          Approve
+          <span>Approve</span>
         </button><br>
         <button type="button"
                 color="danger"
@@ -95,7 +111,7 @@
                 type="button"
                 md-raised-button>
           <md-icon color="white">delete</md-icon>
-          Remove
+          <span>Remove</span>
         </button><br>
         <button type="button"
                 color="warning"
@@ -104,7 +120,7 @@
                 type="button"
                 md-raised-button>
           <md-icon color="white">feedback</md-icon>
-          Experimental
+          <span>Experimental</span>
         </button>
       </ng-template>
       <button *ngIf="rule.status === tslintRuleStatus?.APPROVED"
@@ -115,7 +131,7 @@
               disabled
               md-raised-button>
         <md-icon color="white">check</md-icon>
-        Approved
+        <span>Approved</span>
       </button><br>
       <button *ngIf="rule.status === tslintRuleStatus?.MARKED_AS_EXPERIMENTAL"
               type="button"
@@ -125,7 +141,7 @@
               disabled
               md-raised-button>
         <md-icon color="white">feedback</md-icon>
-        Experimental
+        <span>Experimental</span>
       </button>
       <iframe [src]="rule.url"
               frameborder="0"
@@ -134,3 +150,18 @@
     </expansion-panel-content>
   </expansion-panel>
 </expansion-panels-container>
+<button class="menu-trigger"
+        color="accent"
+        md-raised-button
+        [mdMenuTriggerFor]="menu">
+  <md-icon>more_vert</md-icon>
+  <span>More</span>
+</button>
+<md-menu class="menu-container"
+         #menu="mdMenu">
+  <button md-menu-item
+          (click)="exportJSONFile()">
+    <md-icon>open_in_new</md-icon>
+    <span>Export</span>
+  </button>
+</md-menu>
