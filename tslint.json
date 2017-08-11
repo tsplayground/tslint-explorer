@@ -2,7 +2,9 @@
   "rulesDirectory": [
     "./node_modules/codelyzer"
   ],
-  "extends": [ "codelyzer" ],
+  "extends": [
+    "codelyzer"
+  ],
   "defaultSeverity": "error",
   "rules": {
     "member-access": [
@@ -16,11 +18,6 @@
     ],
     "adjacent-overload-signatures": true,
     "unified-signatures": true,
-    "prefer-function-over-method": [
-      true,
-      "allow-public",
-      "allow-protected"
-    ],
     "no-invalid-this": [
       true,
       "check-function-in-method"
@@ -36,11 +33,7 @@
       "options": true,
       "severity": "warning"
     },
-    "only-arrow-functions": [
-      true,
-      "allow-declarations",
-      "allow-named-functions"
-    ],
+    "only-arrow-functions": true,
     "arrow-parens": [
       true,
       "ban-single-arg-parens"
@@ -81,7 +74,6 @@
       true,
       "array"
     ],
-    "prefer-object-spread": true,
     "object-literal-shorthand": true,
     "object-literal-key-quotes": [
       true,
@@ -89,10 +81,8 @@
     ],
     "quotemark": [
       true,
-      "single",
-      "avoid-escape"
+      "single"
     ],
-    "prefer-template": true,
     "no-invalid-template-strings": {
       "options": true,
       "severity": "warning"
@@ -103,15 +93,11 @@
     ],
     "use-isnan": true,
     "no-conditional-assignment": true,
-    "prefer-conditional-expression": true,
-    "prefer-for-of": true,
     "forin": {
       "options": true,
       "severity": "warning"
     },
-    "switch-default": true,
     "no-switch-case-fall-through": true,
-    "no-unsafe-finally": true,
     "encoding": true,
     "cyclomatic-complexity": [
       true,
@@ -150,13 +136,6 @@
         "parameter": "nospace",
         "property-declaration": "nospace",
         "variable-declaration": "nospace"
-      },
-      {
-        "call-signature": "onespace",
-        "index-signature": "onespace",
-        "parameter": "onespace",
-        "property-declaration": "onespace",
-        "variable-declaration": "onespace"
       }
     ],
     "space-before-function-paren": [
@@ -222,10 +201,8 @@
     ],
     "no-debugger": true,
     "no-eval": true,
-    "no-string-throw": true,
     "no-namespace": true,
     "no-internal-module": true,
-    "radix": true,
     "no-unused-expression": [
       true,
       "allow-fast-null-checks"
@@ -279,5 +256,6 @@
     "no-access-missing-member": true,
     "invoke-injectable": true,
     "template-to-ng-template": true
-  }
+  },
+  "experimentalRules": []
 }
