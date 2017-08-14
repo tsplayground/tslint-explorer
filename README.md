@@ -4,7 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Live demo
 
-Visit [tslint-explorer](tslint-explorer.bl5ck.com) for live demo.
+Visit [tslint-explorer](http://tslint-explorer.bl5ck.com) for live demo.
 
 ## Development server
 
